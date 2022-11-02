@@ -8,13 +8,13 @@
 
 #include <stdint.h>
 
-struct cavs_clock_info {
+struct adsp_clock_info {
 	uint32_t default_freq;
 	uint32_t current_freq;
 	uint32_t lowest_freq;
 };
 
-void cavs_clock_init(void);
+void adsp_clock_init(void);
 
 /** @brief Set cAVS clock frequency
  *
@@ -24,7 +24,7 @@ void cavs_clock_init(void);
  *
  * @return 0 on success, -EINVAL if freq_idx is not valid
  */
-int cavs_clock_set_freq(uint32_t freq_idx);
+int adsp_clock_set_freq(uint32_t freq_idx);
 
 /** @brief Get list of cAVS clock information
  *
@@ -32,29 +32,34 @@ int cavs_clock_set_freq(uint32_t freq_idx);
  *
  * @return array with clock information
  */
-struct cavs_clock_info *cavs_clocks_get(void);
+struct adsp_clock_info *adsp_clocks_get(void);
 
 /* Device tree defined constants */
-#define CAVS_SHIM_BASE          DT_REG_ADDR(DT_NODELABEL(shim))
-#define CAVS_SHIM_CLKCTL        (*((volatile uint32_t *)(CAVS_SHIM_BASE + 0x78)))
-
-#define CAVS_CLOCK_FREQ_ENC     DT_PROP(DT_NODELABEL(clkctl), adsp_clkctl_freq_enc)
-#define CAVS_CLOCK_FREQ_MASK    DT_PROP(DT_NODELABEL(clkctl), adsp_clkctl_freq_mask)
-#define CAVS_CLOCK_FREQ_LEN     DT_PROP_LEN(DT_NODELABEL(clkctl), adsp_clkctl_freq_enc)
-
-#define CAVS_CLOCK_FREQ_DEFAULT DT_PROP(DT_NODELABEL(clkctl), adsp_clkctl_freq_default)
-#define CAVS_CLOCK_FREQ_LOWEST  DT_PROP(DT_NODELABEL(clkctl), adsp_clkctl_freq_lowest)
-
-#define CAVS_CLOCK_FREQ(name)   DT_PROP(DT_NODELABEL(clkctl), adsp_clkctl_clk_##name)
-
-#if DT_PROP(DT_NODELABEL(clkctl), wovcro_supported)
-#define CAVS_CLOCK_HAS_WOVCRO
+#ifdef CONFIG_SOC_SERIES_INTEL_ACE
+#define ADSP_DfPMCCU		DT_REG_ADDR(DT_NODELABEL(dfpmccu))
+#define ADSP_CLKCTL        (*((volatile uint32_t *)(ADSP_DfPMCCU + ACE_DfPMCCU.dfclkctl)))
+#else
+#define CAVS_SHIM		DT_REG_ADDR(DT_NODELABEL(shim))))
+#define ADSP_CLKCTL        (*((volatile uint32_t *)(CAVS_SHIM + CAVS_SHIM.clkctl)))
 #endif
 
-#define CAVS_CLOCK_FREQ_LPRO  CAVS_CLOCK_FREQ(lpro)
-#define CAVS_CLOCK_FREQ_HPRO  CAVS_CLOCK_FREQ(hpro)
-#ifdef CAVS_CLOCK_HAS_WOVCRO
-#define CAVS_CLOCK_FREQ_WOVCRO  CAVS_CLOCK_FREQ(wovcro)
+#define ADSP_CLOCK_FREQ_ENC     DT_PROP(DT_NODELABEL(clkctl), adsp_clkctl_freq_enc)
+#define ADSP_CLOCK_FREQ_MASK    DT_PROP(DT_NODELABEL(clkctl), adsp_clkctl_freq_mask)
+#define ADSP_CLOCK_FREQ_LEN     DT_PROP_LEN(DT_NODELABEL(clkctl), adsp_clkctl_freq_enc)
+
+#define ADSP_CLOCK_FREQ_DEFAULT DT_PROP(DT_NODELABEL(clkctl), adsp_clkctl_freq_default)
+#define ADSP_CLOCK_FREQ_LOWEST  DT_PROP(DT_NODELABEL(clkctl), adsp_clkctl_freq_lowest)
+
+#define ADSP_CLOCK_FREQ(name)   DT_PROP(DT_NODELABEL(clkctl), adsp_clkctl_clk_##name)
+
+#if DT_PROP(DT_NODELABEL(clkctl), wovcro_supported)
+#define ADSP_CLOCK_HAS_WOVCRO
+#endif
+
+#define ADSP_CLOCK_FREQ_LPRO  ADSP_CLOCK_FREQ(lpro)
+#define ADSP_CLOCK_FREQ_HPRO  ADSP_CLOCK_FREQ(hpro)
+#ifdef ADSP_CLOCK_HAS_WOVCRO
+#define ADSP_CLOCK_FREQ_WOVCRO  ADSP_CLOCK_FREQ(wovcro)
 #endif
 
 #endif /* ZEPHYR_SOC_INTEL_ADSP_CAVS_CLK_H_ */

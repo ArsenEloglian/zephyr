@@ -65,7 +65,6 @@ struct ace_dfpmccu {
 	uint32_t _unused3[10];	/* Offset: 0xc0 */
 };
 
-#define CAVS_SHIM (*((volatile struct cavs_shim *)DT_REG_ADDR(DT_NODELABEL(shim))))
 #define ACE_DfPMCCH (*((volatile struct ace_dfpmcch *)DT_REG_ADDR(DT_NODELABEL(dfpmcch))))
 #define ACE_DfPMCCU (*((volatile struct ace_dfpmccu *)DT_REG_ADDR(DT_NODELABEL(dfpmccu))))
 
@@ -91,33 +90,9 @@ struct ace_dfpmccu {
 
 #define ADSP_SHIM_DSPWCTCS_TTIE(c) BIT(8 + (c))
 
-/* Host memory window control.  Not strictly part of the shim block. */
-struct cavs_win {
-	uint32_t dmwba;
-	uint32_t dmwlo;
-};
-
-#define CAVS_WIN ((volatile struct cavs_win *)DT_REG_ADDR(DT_NODELABEL(win)))
-
 #endif /* _ASMLANGUAGE */
 
-
-
-/* cAVS 1.8+ CLKCTL bits */
-#define CAVS_CLKCTL_RHROSCC   BIT(31)	  /* Request HP RING oscillator */
-#define CAVS_CLKCTL_RXOSCC    BIT(30)	  /* Request XTAL oscillator */
-#define CAVS_CLKCTL_RLROSCC   BIT(29)	  /* Request LP RING oscillator */
-#define CAVS_CLKCTL_SLIMFDCGB BIT(25)	  /* Slimbus force dynamic clock gating*/
-#define CAVS_CLKCTL_TCPLCG(x) BIT(16 + x) /* Set bit: prevent clock gating on core x */
-#define CAVS_CLKCTL_SLIMCSS   BIT(6)	  /* Slimbus clock (0: XTAL, 1: Audio) */
-#define CAVS_CLKCTL_WOVCRO    BIT(4)	  /* Request WOVCRO clock */
-#define CAVS_CLKCTL_WOVCROSC  BIT(3)	  /* WOVCRO select */
-#define CAVS_CLKCTL_OCS	      BIT(2)	  /* Oscillator clock (0: LP, 1: HP) */
-#define CAVS_CLKCTL_LMCS      BIT(1)	  /* LP mem divisor (0: div/2, 1: div/4) */
-#define CAVS_CLKCTL_HMCS      BIT(0)	  /* HP mem divisor (0: div/2, 1: div/4) */
-
-#define CAVS_PWRCTL_TCPDSPPG(x) BIT(x)
-#define CAVS_PWRSTS_PDSPPGS(x)	BIT(x)
+#define ACE_CLKCTL_WOVCRO    BIT(4)	  /* Request WOVCRO clock */
 
 #define SHIM_LDOCTL_HPSRAM_LDO_ON     (3 << 0)
 #define SHIM_LDOCTL_HPSRAM_LDO_BYPASS BIT(0)
@@ -128,8 +103,8 @@ struct cavs_win {
 #define ADSP_DMWBA_ENABLE   BIT(0)
 #define ADSP_DMWBA_READONLY BIT(1)
 
-#define CAVS_CLKCTL_OSC_SOURCE_MASK  BIT_MASK(2)
-#define CAVS_CLKCTL_OSC_REQUEST_MASK (~BIT_MASK(28))
+#define ADSP_CLKCTL_OSC_SOURCE_MASK  (3<<2)
+#define ADSP_CLKCTL_OSC_REQUEST_MASK (~BIT_MASK(28))
 
 /** LDO Control */
 #define ADSP_DSPRA_ADDRESS        (0x71A60)
