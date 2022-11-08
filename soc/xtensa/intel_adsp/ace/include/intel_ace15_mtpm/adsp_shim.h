@@ -6,50 +6,68 @@
 #ifndef ZEPHYR_SOC_INTEL_ADSP_SHIM_H_
 #define ZEPHYR_SOC_INTEL_ADSP_SHIM_H_
 
-/* The "shim" block contains most of the general system control
- * registers on cAVS platforms.  While the base address changes, it
- * has remained largely, but not perfectly, compatible between
- * versions.
- */
-
 #ifndef _ASMLANGUAGE
-struct cavs_shim {
-	uint32_t skuid;
-	uint32_t _unused0[7];
-	uint32_t dspwc_lo;
-	uint32_t dspwc_hi;
-	uint32_t dspwctcs;
+
+/**
+ * DfPMCCU
+ * Power Management / Clock Control (HST) Registers
+ *
+ * Offset: 0x0007 1AC0h + 400 0000h * f
+ * These registers block (HST domain) are for general power management
+ * and clock control operation for DSP FW.
+ */
+struct ace_dfpmcch {
+	uint32_t dfspsreq;	/* Offset: 0xc0 */
+	uint32_t _unused0[3];
+	uint32_t dfspsrsp;	/* Offset: 0xd0 */
 	uint32_t _unused1[1];
-	uint32_t dspwct0c_lo;
-	uint32_t dspwct0c_hi;
-	uint32_t dspwct1c_lo;
-	uint32_t dspwct1c_hi;
-	uint32_t _unused2[14];
-	uint32_t clkctl;   /* Offset: 0x78 */
-	uint32_t clksts;   /* Offset: 0x7C */
-	uint32_t _unused3[4];
-	uint16_t pwrctl;
-	uint16_t pwrsts;
-	uint32_t lpsctl;
-	uint32_t lpsdmas0;
-	uint32_t lpsdmas1;
-	uint32_t spsreq;  /* Offset: 0xA0 */
-	uint32_t _unused4[3]; /* Offset: 0xA4 */
-	uint32_t lpsalhss0;
-	uint32_t lpsalhss1;
-	uint32_t lpsalhss2;
-	uint32_t lpsalhss3;
-	uint32_t _unused5[4];
-	uint32_t l2mecs;
-	uint32_t l2mpat;
-	uint32_t _unused6[2];
-	uint32_t ltrc;  /* Offset: 0xe0 */
-	uint32_t _unused8[3];
-	uint32_t dbgo; /* Offset: 0xf0 */
-	uint32_t svcfg; /* Offset: 0xf4 */
-	uint32_t _unused9[2];
+	uint32_t svcfg;		/* Offset: 0xd8 */
+	uint32_t dfltrc;	/* Offset: 0xdc */
+	uint32_t _unused2[8];
 };
+
+/**
+ * DfPMCCU
+ * Power Management / Clock Control (ULP) Registers
+ *
+ * Offset: 0x0007 1B00h + 400 0000h * f
+ * These registers block (ULP domain) are for general power management
+ * and clock control operation for DSP FW.
+ */
+struct ace_dfpmccu {
+	uint32_t dfpmccap;	/* Offset: 0x00 */
+	uint32_t dfhrosccf;	/* Offset: 0x04 */
+	uint32_t dfxosccf;	/* Offset: 0x08 */
+	uint32_t dflrosccf;	/* Offset: 0x0c */
+	uint32_t dfsiorosccf;	/* Offset: 0x10 */
+	uint32_t dfhsiorosccf;	/* Offset: 0x14 */
+	uint32_t dfipllrosccf;	/* Offset: 0x18 */
+	uint32_t dfirosccv;	/* Offset: 0x1c */
+	uint32_t dffbrcfd;	/* Offset: 0x20 */
+	uint32_t dfapllptr;	/* Offset: 0x24 */
+	uint32_t dfclkctl;	/* Offset: 0x78 */
+	uint32_t dfclksts;	/* Offset: 0x7c */
+	uint32_t dfintclkctl;	/* Offset: 0x80 */
+	uint32_t dfcrosts;	/* Offset: 0x84 */
+	uint32_t dfcrodiv;	/* Offset: 0x88 */
+	uint16_t dfpwrctl;	/* Offset: 0x90 */
+	uint16_t dfpwrsts;	/* Offset: 0x92 */
+	uint32_t _unused0[1];
+	uint32_t dflpsdmas0;	/* Offset: 0x98 */
+	uint32_t dflpsdmas1;	/* Offset: 0x9c */
+	uint32_t _unused1[1];
+	uint32_t dfldoctl; 	/* Offset: 0xa4 */
+	uint32_t _unused2[2];
+	uint32_t dflpsalhsso;	/* Offset: 0xb0 */
+	uint32_t dflpsalhss1;	/* Offset: 0xb4 */
+	uint32_t dflpsalhss2;	/* Offset: 0xb8 */
+	uint32_t dflpsalhss3;	/* Offset: 0xbc */
+	uint32_t _unused3[10];	/* Offset: 0xc0 */
+};
+
 #define CAVS_SHIM (*((volatile struct cavs_shim *)DT_REG_ADDR(DT_NODELABEL(shim))))
+#define ACE_DfPMCCH (*((volatile struct ace_dfpmcch *)DT_REG_ADDR(DT_NODELABEL(dfpmcch))))
+#define ACE_DfPMCCU (*((volatile struct ace_dfpmccu *)DT_REG_ADDR(DT_NODELABEL(dfpmccu))))
 
 
 #define ADSP_TTSCAP_OFFSET	0x00
